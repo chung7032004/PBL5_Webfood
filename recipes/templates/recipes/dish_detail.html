@@ -1,0 +1,51 @@
+
+{% extends 'recipes/base.html' %}
+
+{% block title %}{{ dish.name }} | Ẩm Thực Việt{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin: 40px auto; padding: 0 20px; background-color: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    <h1>{{ dish.name }}</h1>                
+    <img src="{{ dish.image.url }}" alt="{{ dish.name }}" style="width: 100%; border-radius: 12px;">
+    <div class="info" style="margin: 20px 0;">
+        <p><strong>Thời gian nấu:</strong> {{ dish.cook_time }} phút</p>
+        <p><strong>Khẩu phần:</strong> {{ dish.serving }} người</p>
+    </div>
+
+    <h2 style="color: #ff7043;">Mô tả</h2>
+    <p>{{ dish.description }}</p>
+
+    <h2 style="color: #ff7043;">Nguyên liệu</h2>
+    <ul style="padding-left: 20px;">
+        {% for ingredient in dish.ingredients.all %}
+            <li>
+                {{ ingredient.name }}
+                {% if ingredient.quantity %} – {{ ingredient.quantity }}{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2 style="color: #ff7043;">Các bước chế biến</h2>
+    <ol style="padding-left: 20px;">
+        {% for step in dish.steps.all %}
+            <li>{{ step.description }}</li>
+        {% endfor %}
+    </ol>
+
+    <h2 style="color: #ff7043; margin-top: 40px;">Video hướng dẫn</h2>
+    {% if dish.get_youtube_embed_url %}
+        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); margin-top: 20px;">
+            <iframe
+                src="{{ dish.get_youtube_embed_url }}"
+                title="YouTube video player"
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 12px;"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen>
+            </iframe>
+        </div>
+    {% else %}
+        <p style="margin-top: 10px; font-style: italic; color: #888;">Chưa có video hướng dẫn cho món ăn này.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

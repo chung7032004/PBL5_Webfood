@@ -1,0 +1,46 @@
+{% extends 'recipes/base.html' %}
+
+{% block title %}Dự đoán món ăn | Ẩm Thực Việt{% endblock %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 40px auto; padding: 20px;">
+    <h2 style="text-align: center; color: #ff7043;">Dự đoán món ăn từ hình ảnh</h2>
+
+    <form method="post" enctype="multipart/form-data" style="text-align: center; margin: 30px 0;">
+        {% csrf_token %}
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit" style="padding: 10px 20px; background-color: #ff7043; color: white; border: none; border-radius: 5px;">Dự đoán</button>
+    </form>
+
+    {% if image_url and prediction %}
+    <div style="display: flex; flex-wrap: wrap; gap: 40px; justify-content: center; margin-top: 30px;">
+        <!-- Ảnh đã upload -->
+        <div style="flex: 1; min-width: 300px; max-width: 400px;">
+            <h3 style="text-align: center;">Ảnh bạn đã chọn:</h3>
+            <img src="{{ image_url }}" alt="Ảnh đã upload" style="width: 100%; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.2);">
+            <p style="text-align: center; margin-top: 10px;">Dự đoán: <strong>{{ prediction|title }}</strong></p>
+        </div>
+
+        <!-- Kết quả tìm được -->
+        <div style="flex: 1; min-width: 300px; max-width: 500px;">
+            <h3 style="text-align: center;">Món ăn tương ứng:</h3>
+            {% if dish_obj %}
+                <a href="{% url 'dish_detail' dish_obj.id %}" style="text-decoration: none; color: inherit;">
+                    <div class="dish-card" style="background-color: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow: hidden;">
+                        <img src="{{ dish_obj.image.url }}" alt="{{ dish_obj.name }}" style="width: 100%; height: 200px; object-fit: cover;">
+                        <div class="dish-content" style="padding: 20px;">
+                            <h3 style="margin: 0 0 10px; color: #333;">{{ dish_obj.name }}</h3>
+                            <p><strong>Thời gian nấu:</strong> {{ dish_obj.cook_time }} phút</p>
+                            <p><strong>Khẩu phần:</strong> {{ dish_obj.serving }} người</p>
+                            <p>{{ dish_obj.description|truncatewords:20 }}</p>
+                        </div>
+                    </div>
+                </a>
+            {% else %}
+                <p style="text-align: center;">Không tìm thấy món ăn tương ứng trong cơ sở dữ liệu.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
